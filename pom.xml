@@ -10,14 +10,31 @@
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <encoding>UTF-8</encoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <gatling.version>${project.version}</gatling.version>
-    <gatling-maven-plugin.version>3.1.1</gatling-maven-plugin.version>
+    <gatling.version>3.3.1</gatling.version>
+    <gatling-plugin.version>3.0.5</gatling-plugin.version>
+    <gatling-maven-plugin.version>3.0.5</gatling-maven-plugin.version>
     <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
-    <scala-maven-plugin.version>4.4.0</scala-maven-plugin.version>
+    <scala-maven-plugin.version>4.3.1</scala-maven-plugin.version>
+    <frontline-maven-plugin.version>1.0.3</frontline-maven-plugin.version>
+    <httpclient.version>4.5.12</httpclient.version>
+    <scala-library.version>2.12.8</scala-library.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala-library.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>io.gatling.highcharts</groupId>
       <artifactId>gatling-charts-highcharts</artifactId>
@@ -36,11 +53,17 @@
   </dependencies>
 
   <build>
+
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+
     <plugins>
       <plugin>
+        <!-- so that maven can create a jar -->
         <artifactId>maven-jar-plugin</artifactId>
         <version>${maven-jar-plugin.version}</version>
       </plugin>
+
+      <!-- this plugin is so maven can compile your scala code -->
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
@@ -51,6 +74,7 @@
               <goal>testCompile</goal>
             </goals>
             <configuration>
+              <recompileMode>all</recompileMode>
               <jvmArgs>
                 <jvmArg>-Xss100M</jvmArg>
               </jvmArgs>
@@ -66,10 +90,29 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- so maven can build a package for FrontLine -->
+      <plugin>
+        <groupId>io.gatling.frontline</groupId>
+        <artifactId>frontline-maven-plugin</artifactId>
+        <version>${frontline-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>package</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- This plugin allows us to run a gatling test through Maven from the command line -->
       <plugin>
         <groupId>io.gatling</groupId>
         <artifactId>gatling-maven-plugin</artifactId>
         <version>${gatling-maven-plugin.version}</version>
+        <configuration>
+          <runMultipleSimulations>true</runMultipleSimulations>
+        </configuration>
       </plugin>
     </plugins>
   </build>
