@@ -53,7 +53,7 @@ class Challenge extends Simulation {
 
   /*** Before ***/
   before {
-    println(s"Running test with ${userCount} users")
+    println(s"Running our test with ${userCount} users")
     println(s"Ramping users over ${rampDuration} seconds")
     println(s"Total Test duration: ${testDuration} seconds")
   }
